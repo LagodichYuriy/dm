@@ -1,0 +1,111 @@
+<html>
+	<head>
+		<title>Scientists!</title>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+
+	<body>
+
+		<table id="data">
+			<thead>
+				<tr>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Date of Birth</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+
+		<script>
+
+			var xhr = new XMLHttpRequest();
+
+			xhr.onreadystatechange = function()
+			{
+				if (xhr.readyState === XMLHttpRequest.DONE)
+				{
+					if (xhr.status === 200)
+					{
+						var data = JSON.parse(xhr.responseText);
+
+						data.sort(function(a, b)
+						{
+							var value_a = a.date_of_birth;
+							var value_b = b.date_of_birth;
+
+							if (value_a.toString().endsWith('BC')) { value_a = '-' + value_a; }
+							if (value_b.toString().endsWith('BC')) { value_b = '-' + value_b; }
+
+							return parseFloat(value_a) - parseFloat(value_b);
+						});
+
+
+						var table = document.getElementById('data').getElementsByTagName('tbody')[0];
+
+
+						for (var index in data)
+						{
+							if (!data.hasOwnProperty(index))
+							{
+								continue;
+							}
+
+							var entry = data[index];
+
+							var row = table.insertRow();
+
+
+							var first_name = '';
+							var last_name  = '';
+
+							entry.name = entry.name.trim();
+							entry.name = entry.name.replace( 'J. ', 'J._' ); // Robert hotfix
+							entry.name = entry.name.replace(' da ', ' da_'); // Leonardo hotfix
+
+							var name_parts = entry.name.split(' ');
+
+							switch (name_parts.length)
+							{
+								case 1:
+									first_name = entry.name;
+									break;
+
+								case 2:
+									console.log(name_parts);
+
+									first_name = name_parts[0];
+									last_name  = name_parts[1];
+									break;
+
+								default:
+									last_name  = name_parts.pop();
+									first_name = name_parts.join(' ');
+							}
+
+							first_name = first_name.replace('_', ' ');
+							last_name  = last_name .replace('_', ' ');
+
+							var cell_first_name = row.insertCell(0);
+							var cell_last_name  = row.insertCell(1);
+							var cell_dob        = row.insertCell(2);
+
+							cell_first_name.appendChild(document.createTextNode(first_name));
+							cell_last_name .appendChild(document.createTextNode(last_name));
+							cell_dob       .appendChild(document.createTextNode(entry.date_of_birth));
+						}
+					}
+					else
+					{
+						alert('something else other than 200 was returned');
+					}
+				}
+			};
+
+			xhr.open('GET', 'https://s3.amazonaws.com/technical-test/scientists.txt', true);
+			xhr.overrideMimeType('text/xml; charset=ISO-8859-1');
+			xhr.send();
+		</script>
+	</body>
+</html>
