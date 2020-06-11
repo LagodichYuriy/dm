@@ -35,7 +35,7 @@ class AStar
 
 	public function reset()
 	{
-		# clean cache
+		# clear cache
 
 		$this->list_open  = [];
 		$this->list_close = [];
