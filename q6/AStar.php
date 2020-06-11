@@ -53,8 +53,6 @@ class AStar
 	{
 		$this->reset();
 
-		$node_prev = null;
-
 		while ($this->list_open)
 		{
 			$node = $this->getNextNode();
