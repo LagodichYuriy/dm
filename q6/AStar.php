@@ -96,7 +96,7 @@ class AStar
 					{
 						$h = $this->getCost($x, $y, $this->x_finish, $this->y_finish);
 
-						$this->addToOpenList($x, $y, $g, $h, $node->x, $node->y, $node);
+						$this->addToOpenList($x, $y, $g, $h, $node->x, $node->y);
 					}
 				}
 			}
@@ -203,9 +203,7 @@ class AStar
 			'f' => null, # g(n) + h(n); intuitively, this is the estimate of the best solution that goes through n
 
 			'x' => null,
-			'y' => null,
-
-			'parent' => null
+			'y' => null
 		];
 
 		foreach ($this->list_open as $x => $array)
@@ -220,8 +218,6 @@ class AStar
 					$node->g = $data->g;
 					$node->h = $data->h;
 					$node->f = $data->g + $data->h;
-
-					$node->parent = $data->parent;
 				}
 			}
 		}
@@ -229,7 +225,7 @@ class AStar
 		return $node;
 	}
 
-	protected function addToOpenList(int $x, int $y, $g, $h, int $x_neighbour = null, int $y_neighbour = null, \stdClass $parent = null): bool
+	protected function addToOpenList(int $x, int $y, $g, $h, int $x_neighbour = null, int $y_neighbour = null): bool
 	{
 		if (isset($this->list_close[$x][$y]))
 		{
@@ -242,9 +238,7 @@ class AStar
 			'h' => $h, # h(n); the estimate, according to the heuristic function, of the cost of getting from n to the goal node
 
 			'x' => $x_neighbour,
-			'y' => $y_neighbour,
-
-			'parent' => $parent
+			'y' => $y_neighbour
 		];
 
 		return true;
